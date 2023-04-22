@@ -46,4 +46,25 @@ BarangServices.fetch = async (kodeBarang) => {
   )[0];
 };
 
+BarangServices.edit = async (
+  kodeBarang,
+  namaBarang,
+  hargaBeli,
+  hargaJual,
+  jumlahBarang
+) => {
+  const data = {
+    namaBarang,
+    hargaBeli,
+    hargaJual,
+    jumlahBarang,
+  };
+
+  await BaseServices.queryBuilder(BarangConstants.BARANG_TABLE)
+    .where({ kodeBarang })
+    .update(data);
+
+  return data;
+};
+
 module.exports = BarangServices;

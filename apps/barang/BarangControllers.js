@@ -42,4 +42,22 @@ BarangControllers.get(
   }
 );
 
+BarangControllers.put(
+  "/:kodeBarang",
+  [UserService.tokenAuthentication, ...BarangValidators.edit],
+  async (req, res) => {
+    return res
+      .status(200)
+      .json(
+        await BarangServices.edit(
+          req.params.kodeBarang,
+          req.body.namaBarang,
+          req.body.hargaBeli,
+          req.body.hargaJual,
+          req.body.jumlahBarang
+        )
+      );
+  }
+);
+
 module.exports = BarangControllers;
