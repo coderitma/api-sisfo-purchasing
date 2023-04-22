@@ -1,4 +1,4 @@
-const { body, validationResult, query } = require("express-validator");
+const { body, validationResult, query, param } = require("express-validator");
 const BaseServices = require("../base/BaseServices");
 const BarangServices = require("./BarangServices");
 
@@ -34,11 +34,27 @@ const validateHargaJual = () =>
 const validateJumlahBarang = () =>
   body("jumlahBarang").not().isEmpty().withMessage("Harga jual wajib.").bail();
 
-const validatePage = () =>
+const validateQueryPage = () =>
   query("page")
     .optional()
     .isNumeric()
     .customSanitizer((value) => parseInt(value));
+
+const validateParamKodeBarang = () =>
+  param("kodeBarang")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Kode barang wajib disertakan pada parameter")
+    .bail()
+    .custom(async (value) => {
+      const barang = await BarangServices.fetch(value);
+      if (!barang) {
+        return Promise.reject();
+      }
+    })
+    .withMessage("Kode barang tidak tersedia")
+    .bail();
 
 BarangValidators.create = [
   validadateKodeBarang()
@@ -73,6 +89,36 @@ BarangValidators.create = [
   BaseServices.executeValidator,
 ];
 
-BarangValidators.list = [validatePage(), BaseServices.executeValidator];
+BarangValidators.list = [validateQueryPage(), BaseServices.executeValidator];
+
+BarangValidators.detail = [
+  validateParamKodeBarang(),
+  BaseServices.executeValidator,
+];
+
+BarangValidators.edit = [
+  validateParamKodeBarang(),
+  validateNamaBarang(),
+  validateHargaBeli()
+    .not()
+    .custom((value) => _.isNumber(value))
+    .withMessage("Harga beli harus angka.")
+    .bail(),
+  validateHargaJual()
+    .not()
+    .custom((value) => _.isNumber(value))
+    .withMessage("Harga jual harus angka.")
+    .bail()
+    .not()
+    .custom((value, { req }) => value <= req.body.hargaBeli)
+    .withMessage("Harga jual tidak boleh kurang atau sama dengan harga beli.")
+    .bail(),
+  validateJumlahBarang()
+    .not()
+    .custom((value, { req }) => value < 1)
+    .withMessage("Jumlah barang tidak boleh kurang dari 1 unit")
+    .bail(),
+  BaseServices.executeValidator,
+];
 
 module.exports = BarangValidators;

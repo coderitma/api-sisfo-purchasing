@@ -32,7 +32,10 @@ BarangServices.fetchAll = async (terms, page) => {
       .orWhereILike("namaBarang", `%${terms}%`);
   }
 
-  return await BaseServices.paginator(page, queryBuilder);
+  return {
+    ...(await BaseServices.paginator(page, queryBuilder)),
+    terms: terms ? terms : "",
+  };
 };
 
 BarangServices.fetch = async (kodeBarang) => {

@@ -31,4 +31,15 @@ BarangControllers.get(
       .json(await BarangServices.fetchAll(req.query.terms, req.query.page));
   }
 );
+
+BarangControllers.get(
+  "/:kodeBarang",
+  [UserService.tokenAuthentication, ...BarangValidators.detail],
+  async (req, res) => {
+    return res
+      .status(200)
+      .json(await BarangServices.fetch(req.params.kodeBarang));
+  }
+);
+
 module.exports = BarangControllers;
