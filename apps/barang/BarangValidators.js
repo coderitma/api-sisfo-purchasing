@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, query } = require("express-validator");
 const BaseServices = require("../base/BaseServices");
 const BarangServices = require("./BarangServices");
 
@@ -34,6 +34,12 @@ const validateHargaJual = () =>
 const validateJumlahBarang = () =>
   body("jumlahBarang").not().isEmpty().withMessage("Harga jual wajib.").bail();
 
+const validatePage = () =>
+  query("page")
+    .optional()
+    .isNumeric()
+    .customSanitizer((value) => parseInt(value));
+
 BarangValidators.create = [
   validadateKodeBarang()
     .custom(async (value) => {
@@ -66,5 +72,7 @@ BarangValidators.create = [
     .bail(),
   BaseServices.executeValidator,
 ];
+
+BarangValidators.list = [validatePage(), BaseServices.executeValidator];
 
 module.exports = BarangValidators;

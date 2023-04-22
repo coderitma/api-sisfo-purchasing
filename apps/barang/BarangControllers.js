@@ -19,8 +19,16 @@ BarangControllers.post(
           req.body.jumlahBarang
         )
       );
-    return res.status(201).json(req.body);
   }
 );
 
+BarangControllers.get(
+  "/",
+  [UserService.tokenAuthentication, ...BarangValidators.list],
+  async (req, res) => {
+    return res
+      .status(200)
+      .json(await BarangServices.fetchAll(req.query.terms, req.query.page));
+  }
+);
 module.exports = BarangControllers;

@@ -23,6 +23,18 @@ BarangServices.create = async (
   return data;
 };
 
+BarangServices.fetchAll = async (terms, page) => {
+  const queryBuilder = BaseServices.queryBuilder(BarangConstants.BARANG_TABLE);
+
+  if (terms) {
+    queryBuilder
+      .whereILike("kodeBarang", `%${terms}%`)
+      .orWhereILike("namaBarang", `%${terms}%`);
+  }
+
+  return await BaseServices.paginator(page, queryBuilder);
+};
+
 BarangServices.fetch = async (kodeBarang) => {
   return (
     await BaseServices.queryBuilder(BarangConstants.BARANG_TABLE).where({
