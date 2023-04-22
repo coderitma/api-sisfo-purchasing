@@ -123,26 +123,12 @@ BarangValidators.detail = [
 BarangValidators.edit = [
   validateParamKodeBarang(),
   validateNamaBarang(),
-  validateHargaBeli()
-    .not()
-    .custom((value) => _.isNumber(value))
-    .withMessage("Harga beli harus angka.")
-    .bail(),
-  validateHargaJual()
-    .not()
-    .custom((value) => _.isNumber(value))
-    .withMessage("Harga jual harus angka.")
-    .bail()
-    .not()
-    .custom((value, { req }) => value <= req.body.hargaBeli)
-    .withMessage("Harga jual tidak boleh kurang atau sama dengan harga beli.")
-    .bail(),
-  validateJumlahBarang()
-    .not()
-    .custom((value, { req }) => value < 1)
-    .withMessage("Jumlah barang tidak boleh kurang dari 1 unit")
-    .bail(),
+  validateHargaBeli(),
+  validateHargaJual(),
+  validateJumlahBarang(),
   BaseServices.executeValidator,
 ];
+
+BarangValidators.delete = [...BarangValidators.detail];
 
 module.exports = BarangValidators;

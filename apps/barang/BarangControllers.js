@@ -60,4 +60,14 @@ BarangControllers.put(
   }
 );
 
+BarangControllers.delete(
+  "/:kodeBarang",
+  [UserService.tokenAuthentication, ...BarangValidators.delete],
+  async (req, res) => {
+    return res
+      .status(204)
+      .json(await BarangServices.delete(req.params.kodeBarang));
+  }
+);
+
 module.exports = BarangControllers;

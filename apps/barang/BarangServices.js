@@ -67,4 +67,12 @@ BarangServices.edit = async (
   return { kodeBarang, ...data };
 };
 
+BarangServices.delete = async (kodeBarang) => {
+  await BaseServices.queryBuilder(BarangConstants.BARANG_TABLE)
+    .where({ kodeBarang })
+    .del();
+
+  return null;
+};
+
 module.exports = BarangServices;
