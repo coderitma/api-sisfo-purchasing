@@ -64,7 +64,7 @@ BarangServices.edit = async (
     .where({ kodeBarang })
     .update(data);
 
-  return data;
+  return { kodeBarang, ...data };
 };
 
 module.exports = BarangServices;
