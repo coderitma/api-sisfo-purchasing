@@ -6,7 +6,7 @@ const BaseValidations = require("../base/BaseValidations");
 const BarangValidators = {};
 
 const validateKodeBarang = () =>
-  body("kodeBarang")
+  check("kodeBarang")
     .trim()
     .not()
     .isEmpty()
@@ -54,12 +54,9 @@ const validateHargaBeli = () =>
   check("hargaBeli")
     .not()
     .isEmpty()
-    .withMessage("Harga jual wajib.")
+    .withMessage("Harga beli wajib.")
     .bail()
-    .not()
-    .custom((value) => _.isNumber(value))
-    .withMessage("Harga beli harus angka.")
-    .bail()
+    .customSanitizer((value) => parseInt(value))
     .not()
     .custom((value) => value <= 0)
     .withMessage("Harga beli tidak boleh 0")
@@ -71,10 +68,7 @@ const validateHargaJual = () =>
     .isEmpty()
     .withMessage("Harga jual wajib.")
     .bail()
-    .not()
-    .custom((value) => _.isNumber(value))
-    .withMessage("Harga jual harus angka.")
-    .bail()
+    .customSanitizer((value) => parseInt(value))
     .not()
     .custom((value) => value <= 0)
     .withMessage("Harga beli tidak boleh 0")
@@ -91,9 +85,7 @@ const validateJumlahBarang = () =>
     .withMessage("Jumalah barang wajib.")
     .bail()
     .not()
-    .custom((value) => _.isNumber(value))
-    .withMessage("Jumlah barang harus angka.")
-    .bail()
+    .customSanitizer((value) => parseInt(value))
     .not()
     .custom((value) => value < 1)
     .withMessage("Jumlah barang tidak boleh kurang dari 1 unit")
@@ -109,7 +101,7 @@ BarangValidators.create = [
 ];
 
 BarangValidators.list = [
-  BaseValidations.validateQueryPage,
+  BaseValidations.validateQueryPage(),
   BaseServices.executeValidator,
 ];
 

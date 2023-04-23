@@ -31,16 +31,6 @@ const validateEmail = () =>
     .bail()
     .isEmail()
     .withMessage("Email harus benar dan valid")
-    .bail();
-
-const validateEmailBackward = () =>
-  validateEmail()
-    .custom(async (value, { req }) => {
-      if (!_.isEmpty(await UserService.isEmailExist(value))) {
-        return Promise.reject();
-      }
-    })
-    .withMessage("Email sudah terdaftar")
     .bail()
     .custom(async (value, { req }) => {
       if (_.isEmpty(await UserService.isEmailExist(value))) {
@@ -48,6 +38,24 @@ const validateEmailBackward = () =>
       }
     })
     .withMessage("Email belum terdaftar")
+    .bail();
+
+const validateEmailBackward = () =>
+  check("email")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Email wajib diisi")
+    .bail()
+    .isEmail()
+    .withMessage("Email harus benar dan valid")
+    .bail()
+    .custom(async (value, { req }) => {
+      if (!_.isEmpty(await UserService.isEmailExist(value))) {
+        return Promise.reject();
+      }
+    })
+    .withMessage("Email sudah terdaftar")
     .bail();
 
 const validatePassword = () =>
@@ -72,19 +80,17 @@ const validatePasswordBackward = () =>
     .withMessage("Password tidak tepat")
     .bail();
 
-// Implementasi validator
-
 UserValidators.register = [
   validateFirstName(),
   validateLastName(),
-  validateEmail(),
+  validateEmailBackward(),
   validatePassword(),
   BaseServices.executeValidator,
 ];
 
 UserValidators.login = [
   validateEmail(),
-  validatePasswordBackward(),
+  validatePassword(),
   BaseServices.executeValidator,
 ];
 

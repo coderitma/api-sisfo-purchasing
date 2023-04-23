@@ -1,7 +1,9 @@
+const { check } = require("express-validator");
+
 const BaseValidations = {};
 
 BaseValidations.validateQueryPage = () =>
-  query("page")
+  check("page")
     .optional()
     .isNumeric()
     .customSanitizer((value) => parseInt(value));
