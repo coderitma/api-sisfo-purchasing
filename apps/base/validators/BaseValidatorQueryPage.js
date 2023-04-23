@@ -1,11 +1,10 @@
 const { check } = require("express-validator");
 
-const BaseValidations = {};
-
-BaseValidations.validateQueryPage = () =>
-  check("page")
+const BaseValidatorQueryPage = () => {
+  return check("page")
     .optional()
     .isNumeric()
     .customSanitizer((value) => parseInt(value));
+};
 
-module.exports = BaseValidations;
+module.exports = BaseValidatorQueryPage;
