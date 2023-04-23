@@ -1,13 +1,13 @@
 const _ = require("lodash");
 var bcrypt = require("bcryptjs");
-const { body } = require("express-validator");
+const { check } = require("express-validator");
 const UserService = require("./UserServices");
 const BaseServices = require("../base/BaseServices");
 
 const UserValidators = {};
 
 const validateFirstName = () =>
-  body("firstName")
+  check("firstName")
     .trim()
     .not()
     .isEmpty()
@@ -15,7 +15,7 @@ const validateFirstName = () =>
     .bail();
 
 const validateLastName = () =>
-  body("lastName")
+  check("lastName")
     .trim()
     .not()
     .isEmpty()
@@ -23,7 +23,7 @@ const validateLastName = () =>
     .bail();
 
 const validateEmail = () =>
-  body("email")
+  check("email")
     .trim()
     .not()
     .isEmpty()
@@ -33,21 +33,7 @@ const validateEmail = () =>
     .withMessage("Email harus benar dan valid")
     .bail();
 
-const validatePassword = () =>
-  body("password")
-    .notEmpty()
-    .withMessage("Passsword tidak boleh kosong")
-    .isLength({ min: 8, max: 100 })
-    .withMessage("Minimum password 8 karakter!")
-    .bail();
-
-/**
- * ALL USABLE VALIDATOR IS HERE
- */
-
-UserValidators.register = [
-  validateFirstName(),
-  validateLastName(),
+const validateEmailBackward = () =>
   validateEmail()
     .custom(async (value, { req }) => {
       if (!_.isEmpty(await UserService.isEmailExist(value))) {
@@ -55,20 +41,26 @@ UserValidators.register = [
       }
     })
     .withMessage("Email sudah terdaftar")
-    .bail(),
-  validatePassword(),
-  BaseServices.executeValidator,
-];
-
-UserValidators.login = [
-  validateEmail()
+    .bail()
     .custom(async (value, { req }) => {
       if (_.isEmpty(await UserService.isEmailExist(value))) {
         return Promise.reject();
       }
     })
     .withMessage("Email belum terdaftar")
-    .bail(),
+    .bail();
+
+const validatePassword = () =>
+  check("password")
+    .notEmpty()
+    .withMessage("Passsword tidak boleh kosong")
+    .isLength({ min: 8, max: 100 })
+    .withMessage("Minimum password 8 karakter!")
+    .bail()
+    .withMessage("Password tidak tepat")
+    .bail();
+
+const validatePasswordBackward = () =>
   validatePassword()
     .custom(async (value, { req }) => {
       const user = await UserService.fetch(req.body.email);
@@ -78,8 +70,31 @@ UserValidators.login = [
         return Promise.reject();
     })
     .withMessage("Password tidak tepat")
-    .bail(),
+    .bail();
+
+// Implementasi validator
+
+UserValidators.register = [
+  validateFirstName(),
+  validateLastName(),
+  validateEmail(),
+  validatePassword(),
   BaseServices.executeValidator,
+];
+
+UserValidators.login = [
+  validateEmail(),
+  validatePasswordBackward(),
+  BaseServices.executeValidator,
+];
+
+UserValidators.fields = [
+  validateFirstName,
+  validateLastName,
+  validateEmail,
+  validateEmailBackward,
+  validatePassword,
+  validatePasswordBackward,
 ];
 
 module.exports = UserValidators;

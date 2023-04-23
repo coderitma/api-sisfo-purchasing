@@ -18,13 +18,13 @@ BarangServices.create = async (
     jumlahBarang,
   };
 
-  await BaseServices.queryBuilder(BarangConstants.BARANG_TABLE).insert(data);
+  await BaseServices.queryBuilder(BarangConstants.TABLE).insert(data);
 
   return data;
 };
 
 BarangServices.fetchAll = async (terms, page) => {
-  const queryBuilder = BaseServices.queryBuilder(BarangConstants.BARANG_TABLE);
+  const queryBuilder = BaseServices.queryBuilder(BarangConstants.TABLE);
 
   if (terms) {
     queryBuilder
@@ -40,7 +40,7 @@ BarangServices.fetchAll = async (terms, page) => {
 
 BarangServices.fetch = async (kodeBarang) => {
   return (
-    await BaseServices.queryBuilder(BarangConstants.BARANG_TABLE).where({
+    await BaseServices.queryBuilder(BarangConstants.TABLE).where({
       kodeBarang,
     })
   )[0];
@@ -60,7 +60,7 @@ BarangServices.edit = async (
     jumlahBarang,
   };
 
-  await BaseServices.queryBuilder(BarangConstants.BARANG_TABLE)
+  await BaseServices.queryBuilder(BarangConstants.TABLE)
     .where({ kodeBarang })
     .update(data);
 
@@ -68,7 +68,7 @@ BarangServices.edit = async (
 };
 
 BarangServices.delete = async (kodeBarang) => {
-  await BaseServices.queryBuilder(BarangConstants.BARANG_TABLE)
+  await BaseServices.queryBuilder(BarangConstants.TABLE)
     .where({ kodeBarang })
     .del();
 

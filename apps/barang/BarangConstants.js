@@ -1,5 +1,5 @@
 const BarangConstants = {};
 
-BarangConstants.BARANG_TABLE = "barang";
+BarangConstants.TABLE = "barang";
 
 module.exports = BarangConstants;

@@ -1,19 +1,44 @@
-const { body, validationResult, query, param } = require("express-validator");
+const { body, query, param, check } = require("express-validator");
 const BaseServices = require("../base/BaseServices");
 const BarangServices = require("./BarangServices");
+const BaseValidations = require("../base/BaseValidations");
 
 const BarangValidators = {};
 
-const validadateKodeBarang = () =>
+const validateKodeBarang = () =>
   body("kodeBarang")
     .trim()
     .not()
     .isEmpty()
     .withMessage("Kode barang wajib")
+    .bail()
+    .custom(async (value) => {
+      const barang = await BarangServices.fetch(value);
+      if (barang) {
+        return Promise.reject();
+      }
+    })
+    .withMessage("Kode barang sudah digunakan.")
+    .bail();
+
+const validateKodeBarangBackward = () =>
+  check("kodeBarang")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Kode barang wajib")
+    .bail()
+    .custom(async (value) => {
+      const barang = await BarangServices.fetch(value);
+      if (!barang) {
+        return Promise.reject();
+      }
+    })
+    .withMessage("Kode barang tidak ditemukan.")
     .bail();
 
 const validateNamaBarang = () =>
-  body("namaBarang")
+  check("namaBarang")
     .trim()
     .not()
     .isEmpty()
@@ -26,7 +51,7 @@ const validateNamaBarang = () =>
     .bail();
 
 const validateHargaBeli = () =>
-  body("hargaBeli")
+  check("hargaBeli")
     .not()
     .isEmpty()
     .withMessage("Harga jual wajib.")
@@ -41,7 +66,7 @@ const validateHargaBeli = () =>
     .bail();
 
 const validateHargaJual = () =>
-  body("hargaJual")
+  check("hargaJual")
     .not()
     .isEmpty()
     .withMessage("Harga jual wajib.")
@@ -60,7 +85,7 @@ const validateHargaJual = () =>
     .bail();
 
 const validateJumlahBarang = () =>
-  body("jumlahBarang")
+  check("jumlahBarang")
     .not()
     .isEmpty()
     .withMessage("Jumalah barang wajib.")
@@ -74,38 +99,8 @@ const validateJumlahBarang = () =>
     .withMessage("Jumlah barang tidak boleh kurang dari 1 unit")
     .bail();
 
-const validateQueryPage = () =>
-  query("page")
-    .optional()
-    .isNumeric()
-    .customSanitizer((value) => parseInt(value));
-
-const validateParamKodeBarang = () =>
-  param("kodeBarang")
-    .trim()
-    .not()
-    .isEmpty()
-    .withMessage("Kode barang wajib disertakan pada parameter")
-    .bail()
-    .custom(async (value) => {
-      const barang = await BarangServices.fetch(value);
-      if (!barang) {
-        return Promise.reject();
-      }
-    })
-    .withMessage("Kode barang tidak tersedia")
-    .bail();
-
 BarangValidators.create = [
-  validadateKodeBarang()
-    .custom(async (value) => {
-      const barang = await BarangServices.fetch(value);
-      if (barang) {
-        return Promise.reject();
-      }
-    })
-    .withMessage("Kode barang sudah digunakan.")
-    .bail(),
+  validateKodeBarang(),
   validateNamaBarang(),
   validateHargaBeli(),
   validateHargaJual(),
@@ -113,15 +108,18 @@ BarangValidators.create = [
   BaseServices.executeValidator,
 ];
 
-BarangValidators.list = [validateQueryPage(), BaseServices.executeValidator];
+BarangValidators.list = [
+  BaseValidations.validateQueryPage,
+  BaseServices.executeValidator,
+];
 
 BarangValidators.detail = [
-  validateParamKodeBarang(),
+  validateKodeBarangBackward(),
   BaseServices.executeValidator,
 ];
 
 BarangValidators.edit = [
-  validateParamKodeBarang(),
+  validateKodeBarangBackward(),
   validateNamaBarang(),
   validateHargaBeli(),
   validateHargaJual(),
@@ -130,5 +128,14 @@ BarangValidators.edit = [
 ];
 
 BarangValidators.delete = [...BarangValidators.detail];
+
+BarangValidators.fields = {
+  validateKodeBarang,
+  validateKodeBarangBackward,
+  validateNamaBarang,
+  validateHargaBeli,
+  validateHargaJual,
+  validateJumlahBarang,
+};
 
 module.exports = BarangValidators;
