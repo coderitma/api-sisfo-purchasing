@@ -1,5 +1,5 @@
 const BaseServiceQueryBuilder = require("../../base/services/BaseServiceQueryBuilder");
-const { BARANG_CONFIG_TABLE } = require("../config");
+const { BARANG_CONFIG_MAIN_TABLE } = require("../config");
 
 const BarangServiceCreate = async (
   kodeBarang,
@@ -16,7 +16,7 @@ const BarangServiceCreate = async (
     jumlahBarang,
   };
 
-  await BaseServiceQueryBuilder(BARANG_CONFIG_TABLE).insert(data);
+  await BaseServiceQueryBuilder(BARANG_CONFIG_MAIN_TABLE).insert(data);
 
   return data;
 };

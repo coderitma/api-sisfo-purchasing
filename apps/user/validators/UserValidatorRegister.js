@@ -1,7 +1,6 @@
 const _ = require("lodash");
 const { check } = require("express-validator");
 const UserServiceIsEmailExist = require("../services/UserServiceIsEmailExist");
-const BaseValidatorRun = require("../../base/validators/BaseValidatorRun");
 
 const UserValidatorRegister = () => {
   return [
@@ -38,7 +37,6 @@ const UserValidatorRegister = () => {
       .isLength({ min: 8, max: 100 })
       .withMessage("Minimum password 8 karakter!")
       .bail(),
-    BaseValidatorRun,
   ];
 };
 

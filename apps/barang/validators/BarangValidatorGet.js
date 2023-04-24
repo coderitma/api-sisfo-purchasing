@@ -1,5 +1,4 @@
 const { param } = require("express-validator");
-const BaseValidatorRun = require("../../base/validators/BaseValidatorRun");
 const BarangServiceGet = require("../services/BarangServiceGet");
 
 const BarangValidatorGet = () => {
@@ -17,7 +16,6 @@ const BarangValidatorGet = () => {
         }
       })
       .bail(),
-    BaseValidatorRun,
   ];
 };
 

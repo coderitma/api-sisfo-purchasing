@@ -1,3 +1,3 @@
 module.exports = {
-  USER_CONFIG_TABLE: "user",
+  USER_CONFIG_MAIN_TABLE: "user",
 };

@@ -1,7 +1,7 @@
 const BaseValidatorQueryPage = require("../../base/validators/BaseValidatorQueryPage");
 
-const BarangValidatorList = () => {
+const PemasokValidatorList = () => {
   return [BaseValidatorQueryPage()];
 };
 
-module.exports = BarangValidatorList;
+module.exports = PemasokValidatorList;

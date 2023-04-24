@@ -1,7 +1,6 @@
 const { check } = require("express-validator");
 var bcrypt = require("bcryptjs");
 const UserServiceFetch = require("../services/UserServiceFetch");
-const BaseValidatorRun = require("../../base/validators/BaseValidatorRun");
 
 const UserValidatorLogin = () => {
   return [
@@ -40,7 +39,6 @@ const UserValidatorLogin = () => {
         return value;
       })
       .bail(),
-    BaseValidatorRun,
   ];
 };
 

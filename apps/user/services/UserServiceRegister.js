@@ -1,10 +1,10 @@
 var bcrypt = require("bcryptjs");
 const BaseServiceQueryBuilder = require("../../base/services/BaseServiceQueryBuilder");
-const { USER_CONFIG_TABLE } = require("../config");
+const { USER_CONFIG_MAIN_TABLE } = require("../config");
 
 const UserServiceRegister = async (firstName, lastName, email, password) => {
   const passwordHash = await bcrypt.hash(password, 10);
-  await BaseServiceQueryBuilder(USER_CONFIG_TABLE).insert({
+  await BaseServiceQueryBuilder(USER_CONFIG_MAIN_TABLE).insert({
     firstName,
     lastName,
     email,

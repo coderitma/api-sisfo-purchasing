@@ -1,10 +1,9 @@
-const { check } = require("express-validator");
+const { body } = require("express-validator");
 const BarangServiceGet = require("../services/BarangServiceGet");
-const BaseValidatorRun = require("../../base/validators/BaseValidatorRun");
 
 const BarangValidatorCreate = () => {
   return [
-    check("kodeBarang")
+    body("kodeBarang")
       .trim()
       .not()
       .isEmpty()
@@ -17,7 +16,7 @@ const BarangValidatorCreate = () => {
         }
       })
       .bail(),
-    check("namaBarang")
+    body("namaBarang")
       .trim()
       .not()
       .isEmpty()
@@ -28,7 +27,7 @@ const BarangValidatorCreate = () => {
       })
       .withMessage("Nama barang minimal 5 karakter.")
       .bail(),
-    check("hargaBeli")
+    body("hargaBeli")
       .not()
       .isEmpty()
       .withMessage("Harga beli wajib.")
@@ -38,7 +37,7 @@ const BarangValidatorCreate = () => {
       .custom((value) => value <= 0)
       .withMessage("Harga beli tidak boleh 0")
       .bail(),
-    check("hargaJual")
+    body("hargaJual")
       .not()
       .isEmpty()
       .withMessage("Harga jual wajib.")
@@ -52,7 +51,7 @@ const BarangValidatorCreate = () => {
       .custom((value, { req }) => value <= req.body.hargaBeli)
       .withMessage("Harga jual tidak boleh kurang atau sama dengan harga beli.")
       .bail(),
-    check("jumlahBarang")
+    body("jumlahBarang")
       .not()
       .isEmpty()
       .withMessage("Jumalah barang wajib.")
@@ -63,7 +62,6 @@ const BarangValidatorCreate = () => {
       .custom((value) => value < 1)
       .withMessage("Jumlah barang tidak boleh kurang dari 1 unit")
       .bail(),
-    BaseValidatorRun,
   ];
 };
 
