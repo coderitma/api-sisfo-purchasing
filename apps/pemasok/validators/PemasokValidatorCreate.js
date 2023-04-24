@@ -4,48 +4,47 @@ const PemasokServiceGet = require("../services/PemasokServiceGet");
 const PemasokValidatorCreate = () => {
   return [
     body("kodePemasok")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Kode pemasok wajib")
+      .notEmpty()
+      .withMessage("Kode pemasok harus diisi.")
       .bail()
+      .trim()
       .custom(async (value) => {
         const pemasok = await PemasokServiceGet(value);
         if (pemasok) {
-          throw new Error("Kode pemasok sudah digunakan.");
+          throw new Error("Kode pemasok sudah pernah dibuat.");
         }
       })
       .bail(),
     body("namaPemasok")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Nama pemasok wajib.")
+      .notEmpty()
+      .withMessage("Nama pemasok kosong.")
       .bail()
+      .trim()
       .isLength({
         min: 5,
       })
-      .withMessage("Nama pemasok minimal 5 karakter.")
-      .bail(),
+      .withMessage("Nama pemasok kurang dari 5 karakter."),
     body("alamatPemasok")
+      .notEmpty()
+      .withMessage("Alamat pemasok kosong.")
+      .bail()
       .trim()
       .isLength({
         min: 10,
       })
-      .withMessage("Alamat pemasok minimal 10 karakter.")
-      .bail(),
+      .withMessage("Alamat pemasok kurang dari 10 karakter."),
     body("teleponPemasok")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Telepon pemasok wajib.")
+      .notEmpty()
+      .withMessage("Telepon pemasok kosong.")
       .bail()
+      .trim()
       .isLength({
         min: 10,
         max: 13,
       })
-      .withMessage("Telepon pemasok harus 10 s/d 13 karakter.")
-      .bail(),
+      .withMessage(
+        "Telepon pemasok kurang dari 10 atau lebih dari 13 nomor karakter."
+      ),
   ];
 };
 

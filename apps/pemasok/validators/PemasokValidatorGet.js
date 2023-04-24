@@ -4,18 +4,16 @@ const PemasokServiceGet = require("../services/PemasokServiceGet");
 const PemasokValidatorGet = () => {
   return [
     param("kodePemasok")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Kode pemasok wajib")
+      .notEmpty()
+      .withMessage("Kode pemasok kosong.")
       .bail()
+      .trim()
       .custom(async (value) => {
         const pemasok = await PemasokServiceGet(value);
         if (!pemasok) {
-          throw new Error("Kode pemasok tidak tersedia.");
+          throw new Error("Kode pemasok tidak ditemukan.");
         }
-      })
-      .bail(),
+      }),
   ];
 };
 

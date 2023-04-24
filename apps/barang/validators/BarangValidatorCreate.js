@@ -4,64 +4,71 @@ const BarangServiceGet = require("../services/BarangServiceGet");
 const BarangValidatorCreate = () => {
   return [
     body("kodeBarang")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Kode barang wajib")
+      .notEmpty()
+      .withMessage("Kode barang wajib diisi.")
       .bail()
+      .trim()
       .custom(async (value) => {
         const barang = await BarangServiceGet(value);
         if (barang) {
           throw new Error("Kode barang sudah digunakan.");
         }
-      })
-      .bail(),
+      }),
     body("namaBarang")
+      .notEmpty()
+      .withMessage("Nama barang wajib diisi.")
+      .bail()
       .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Nama barang wajib.")
-      .bail()
-      .isLength({
-        min: 5,
-      })
-      .withMessage("Nama barang minimal 5 karakter.")
-      .bail(),
+      .isLength({ min: 5 })
+      .withMessage("Nama barang minimal 5 karakter."),
     body("hargaBeli")
-      .not()
-      .isEmpty()
-      .withMessage("Harga beli wajib.")
+      .notEmpty()
+      .withMessage("Harga beli wajib diisi.")
+      .bail()
+      .isInt()
+      .withMessage("Harga beli harus angka.")
       .bail()
       .customSanitizer((value) => parseInt(value))
-      .not()
-      .custom((value) => value <= 0)
-      .withMessage("Harga beli tidak boleh 0")
-      .bail(),
+      .custom((value) => {
+        if (value <= 0) {
+          throw new Error("Harga beli harus lebih dari 0.");
+        }
+        return true;
+      }),
     body("hargaJual")
-      .not()
-      .isEmpty()
-      .withMessage("Harga jual wajib.")
+      .notEmpty()
+      .withMessage("Harga jual harus diisi.")
+      .bail()
+      .isInt()
+      .withMessage("Harga jual harus angka.")
       .bail()
       .customSanitizer((value) => parseInt(value))
-      .not()
-      .custom((value) => value <= 0)
-      .withMessage("Harga beli tidak boleh 0")
-      .bail()
-      .not()
-      .custom((value, { req }) => value <= req.body.hargaBeli)
-      .withMessage("Harga jual tidak boleh kurang atau sama dengan harga beli.")
-      .bail(),
+      .custom((value) => {
+        if (value <= 0) {
+          throw new Error("Harga jual harus lebih dari 0.");
+        }
+        return true;
+      })
+      .custom((value, { req }) => {
+        if (value <= req.body.hargaBeli) {
+          throw new Error("Harga jual harus lebih besar dari harga beli.");
+        }
+        return true;
+      }),
     body("jumlahBarang")
-      .not()
-      .isEmpty()
-      .withMessage("Jumalah barang wajib.")
+      .notEmpty()
+      .withMessage("Jumlah barang harus diisi.")
       .bail()
-      .not()
+      .isInt()
+      .withMessage("Jumlah barang harus angka.")
+      .bail()
       .customSanitizer((value) => parseInt(value))
-      .not()
-      .custom((value) => value < 1)
-      .withMessage("Jumlah barang tidak boleh kurang dari 1 unit")
-      .bail(),
+      .custom((value) => {
+        if (value < 1) {
+          throw new Error("Jumlah barang harus di atas 0.");
+        }
+        return true;
+      }),
   ];
 };
 

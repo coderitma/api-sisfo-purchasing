@@ -5,25 +5,22 @@ const UserServiceIsEmailExist = require("../services/UserServiceIsEmailExist");
 const UserValidatorRegister = () => {
   return [
     check("firstName")
-      .trim()
-      .not()
-      .isEmpty()
+      .exists()
       .withMessage("Nama depan wajib diisi")
-      .bail(),
-    check("lastName")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Nama belakang wajib diisi")
-      .bail(),
-    check("email")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Email wajib diisi")
       .bail()
+      .trim(),
+    check("lastName")
+      .exists()
+      .withMessage("Nama belakang wajib diisi.")
+      .bail()
+      .trim(),
+    check("email")
+      .exists()
+      .withMessage("Email wajib diisi.")
+      .bail()
+      .trim()
       .isEmail()
-      .withMessage("Email harus benar dan valid")
+      .withMessage("Email harus benar dan valid.")
       .bail()
       .custom(async (value) => {
         if (await UserServiceIsEmailExist(value)) {
@@ -33,9 +30,9 @@ const UserValidatorRegister = () => {
       .bail(),
     check("password")
       .notEmpty()
-      .withMessage("Passsword tidak boleh kosong")
+      .withMessage("Passsword wajib diisi.")
       .isLength({ min: 8, max: 100 })
-      .withMessage("Minimum password 8 karakter!")
+      .withMessage("Password minimum 8 karakter.")
       .bail(),
   ];
 };

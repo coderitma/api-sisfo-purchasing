@@ -17,13 +17,11 @@ const PembelianValidatorCreate = () => {
         if (pembelian) {
           throw new Error("Faktur pembelian sudah digunakan.");
         }
-      })
-      .bail(),
+      }),
     body("tanggal") // Field tanggal
       .trim()
       .exists()
-      .withMessage("Tanggal transaksi wajib")
-      .bail(),
+      .withMessage("Tanggal transaksi wajib"),
     body("total") // Field total
       .exists()
       .withMessage("Jumlah beli wajib.")
@@ -31,27 +29,21 @@ const PembelianValidatorCreate = () => {
       .customSanitizer((value) => parseInt(value))
       .not()
       .custom((value) => value <= 0)
-      .withMessage("Total tidak boleh 0")
-      .bail(),
+      .withMessage("Total tidak boleh 0"),
     body("dibayar")
       .exists()
       .withMessage("Dibayar wajib.")
-      .bail()
       .customSanitizer((value) => parseInt(value))
-      .bail()
       .custom((value, { req }) => {
         if (value < req.body.total) {
           throw new Error("Uang dibayar kurang.");
         }
         return true;
-      })
-      .bail(),
+      }),
     body("kembali")
       .exists()
       .withMessage("Kembali wajib.")
-      .bail()
       .customSanitizer((value) => parseInt(value))
-      .bail()
       .custom((value, { req }) => {
         const calculateKembali = req.body.dibayar - req.body.total;
         if (calculateKembali < 0) {
@@ -61,49 +53,40 @@ const PembelianValidatorCreate = () => {
         }
 
         return true;
-      })
-      .bail(),
+      }),
 
     body("kodePemasok")
       .exists()
       .withMessage("Kode barang wajib")
-      .bail()
       .custom(async (value) => {
         const pemasok = await PemasokServiceGet(value);
         if (!pemasok) {
           throw new Error("Kode pemasok tidak tersedia.");
         }
-      })
-      .bail(),
+      }),
     body("items.*.kodeBarang")
       .exists()
       .withMessage("Kode barang wajib")
-      .bail()
       .custom(async (value) => {
         const barang = await BarangServiceGet(value);
         if (!barang) {
           throw new Error("Kode barang tidak tersedia.");
         }
-      })
-      .bail(),
+      }),
     body("items")
       .exists()
       .withMessage("Item wajib.")
-      .bail()
       .isArray({ min: 1 })
-      .withMessage("Item harus berupa array dan minimal 1 barang di dalamnya.")
-      .bail(),
+      .withMessage("Item harus berupa array dan minimal 1 barang di dalamnya."),
     body("items.*.namaBarang")
       .trim()
       .not()
       .isEmpty()
       .withMessage("Nama barang wajib.")
-      .bail()
       .isLength({
         min: 5,
       })
       .withMessage("Nama barang minimal 5 karakter.")
-      .bail()
       .custom(async (value, { req, location, path }) => {
         const index = _.toPath(path)[1];
         const barang = await BarangServiceGet(
@@ -112,18 +95,14 @@ const PembelianValidatorCreate = () => {
         if (barang.namaBarang !== value) {
           throw new Error("Nama barang tidak sama dengan nama barang aslinya.");
         }
-      })
-      .bail(),
+      }),
     body("items.*.hargaBeli")
       .not()
       .isEmpty()
       .withMessage("Harga beli wajib.")
-      .bail()
       .customSanitizer((value) => parseInt(value))
-      .not()
       .custom((value) => value <= 0)
       .withMessage("Harga beli tidak boleh 0")
-      .bail()
       .custom(async (value, { req, location, path }) => {
         const index = _.toPath(path)[1];
         const barang = await BarangServiceGet(
@@ -134,25 +113,20 @@ const PembelianValidatorCreate = () => {
             "Harga beli barang tidak sama dengan harga beli aslinya."
           );
         }
-      })
-      .bail(),
+      }),
     body("items.*.jumlahBeli")
       .not()
       .isEmpty()
       .withMessage("Jumlah beli wajib.")
-      .bail()
       .customSanitizer((value) => parseInt(value))
       .not()
       .custom((value) => value <= 0)
-      .withMessage("Jumlah beli tidak boleh 0")
-      .bail(),
+      .withMessage("Jumlah beli tidak boleh 0"),
     body("items.*.subtotal")
       .not()
       .isEmpty()
       .withMessage("Subtotal wajib.")
-      .bail()
       .customSanitizer((value) => parseInt(value))
-      .not()
       .custom((value) => value <= 0)
       .withMessage("Jumlah beli tidak boleh 0")
       .bail()

@@ -4,6 +4,9 @@ const BaseValidatorQueryPage = () => {
   return check("page")
     .optional()
     .isNumeric()
+    .isInt()
+    .withMessage("Page harus berisi angka.")
+    .bail()
     .customSanitizer((value) => parseInt(value));
 };
 
