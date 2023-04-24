@@ -22,21 +22,25 @@ router.post(
   ],
   BarangControllerCreate
 );
+
 router.get(
   "/",
   [UserServiceTokenAuthentication, ...BarangValidatorList(), BaseValidatorRun],
   BarangControllerList
 );
+
 router.get(
   "/:kodeBarang",
   [UserServiceTokenAuthentication, ...BarangValidatorGet(), BaseValidatorRun],
   BarangControllerGet
 );
+
 router.put(
   "/:kodeBarang",
   [UserServiceTokenAuthentication, ...BarangValidatorEdit(), BaseValidatorRun],
   BarangControllerEdit
 );
+
 router.delete(
   "/:kodeBarang",
   [
@@ -46,4 +50,5 @@ router.delete(
   ],
   BarangControllerDelete
 );
+
 module.exports = router;
