@@ -6,11 +6,9 @@ const PemasokServiceGet = require("../../pemasok/services/PemasokServiceGet");
 
 const PembelianValidatorCreate = () => {
   return [
-    body("faktur") // Field faktur
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("Kode barang wajib")
+    body("faktur")
+      .notEmpty()
+      .withMessage("Faktur tidak kosong.")
       .bail()
       .custom(async (value) => {
         const pembelian = await PembelianServiceGet(value);
@@ -18,21 +16,33 @@ const PembelianValidatorCreate = () => {
           throw new Error("Faktur pembelian sudah digunakan.");
         }
       }),
-    body("tanggal") // Field tanggal
-      .trim()
-      .exists()
-      .withMessage("Tanggal transaksi wajib"),
-    body("total") // Field total
-      .exists()
+    body("tanggal")
+      .notEmpty()
+      .withMessage("Tanggal transaksi wajib")
+      .bail()
+      .trim(),
+    body("total")
+      .notEmpty()
       .withMessage("Jumlah beli wajib.")
       .bail()
+      .isInt()
+      .withMessage("Total harus angka.")
+      .bail()
       .customSanitizer((value) => parseInt(value))
-      .not()
-      .custom((value) => value <= 0)
+      .custom((value) => {
+        if (value <= 0) {
+          throw new Error("Total tidak boleh bernilai 0 atau di bawahnya.");
+        }
+        return true;
+      })
       .withMessage("Total tidak boleh 0"),
     body("dibayar")
-      .exists()
+      .notEmpty()
       .withMessage("Dibayar wajib.")
+      .bail()
+      .isInt()
+      .withMessage("Dibayar harus angka.")
+      .bail()
       .customSanitizer((value) => parseInt(value))
       .custom((value, { req }) => {
         if (value < req.body.total) {
@@ -41,8 +51,12 @@ const PembelianValidatorCreate = () => {
         return true;
       }),
     body("kembali")
-      .exists()
+      .notEmpty()
       .withMessage("Kembali wajib.")
+      .bail()
+      .isInt()
+      .withMessage("Total harus angka.")
+      .bail()
       .customSanitizer((value) => parseInt(value))
       .custom((value, { req }) => {
         const calculateKembali = req.body.dibayar - req.body.total;
@@ -56,33 +70,39 @@ const PembelianValidatorCreate = () => {
       }),
 
     body("kodePemasok")
-      .exists()
-      .withMessage("Kode barang wajib")
+      .notEmpty()
+      .withMessage("Kode pemasok wajib")
+      .bail()
       .custom(async (value) => {
         const pemasok = await PemasokServiceGet(value);
         if (!pemasok) {
           throw new Error("Kode pemasok tidak tersedia.");
         }
       }),
+
     body("items.*.kodeBarang")
-      .exists()
+      .notEmpty()
       .withMessage("Kode barang wajib")
+      .bail()
       .custom(async (value) => {
         const barang = await BarangServiceGet(value);
         if (!barang) {
           throw new Error("Kode barang tidak tersedia.");
         }
       }),
+
     body("items")
-      .exists()
-      .withMessage("Item wajib.")
+      .notEmpty()
+      .withMessage("Item pembelian wajib.")
+      .bail()
       .isArray({ min: 1 })
       .withMessage("Item harus berupa array dan minimal 1 barang di dalamnya."),
+
     body("items.*.namaBarang")
-      .trim()
-      .not()
-      .isEmpty()
+      .notEmpty()
       .withMessage("Nama barang wajib.")
+      .bail()
+      .trim()
       .isLength({
         min: 5,
       })
@@ -97,9 +117,9 @@ const PembelianValidatorCreate = () => {
         }
       }),
     body("items.*.hargaBeli")
-      .not()
-      .isEmpty()
+      .notEmpty()
       .withMessage("Harga beli wajib.")
+      .bail()
       .customSanitizer((value) => parseInt(value))
       .custom((value) => value <= 0)
       .withMessage("Harga beli tidak boleh 0")
@@ -115,20 +135,26 @@ const PembelianValidatorCreate = () => {
         }
       }),
     body("items.*.jumlahBeli")
-      .not()
-      .isEmpty()
+      .notEmpty()
       .withMessage("Jumlah beli wajib.")
+      .bail()
+      .isInt()
+      .withMessage("Jumlah beli harus angka.")
+      .bail()
       .customSanitizer((value) => parseInt(value))
-      .not()
       .custom((value) => value <= 0)
       .withMessage("Jumlah beli tidak boleh 0"),
     body("items.*.subtotal")
-      .not()
-      .isEmpty()
+      .notEmpty()
       .withMessage("Subtotal wajib.")
+      .bail()
       .customSanitizer((value) => parseInt(value))
-      .custom((value) => value <= 0)
-      .withMessage("Jumlah beli tidak boleh 0")
+      .custom((value) => {
+        if (value <= 0) {
+          throw new Error("Nilai subtotal tidak boleh 0 atau dibawahnya.");
+        }
+        return true;
+      })
       .bail()
       .custom(async (value, { req, location, path }) => {
         const index = _.toPath(path)[1];
