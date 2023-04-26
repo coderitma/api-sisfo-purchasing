@@ -2,11 +2,15 @@ const BaseServiceQueryBuilder = require("../../base/services/BaseServiceQueryBui
 const { BARANG_CONFIG_MAIN_TABLE } = require("../config");
 
 const BarangServiceDelete = async (kodeBarang) => {
-  await BaseServiceQueryBuilder(BARANG_CONFIG_MAIN_TABLE)
-    .where({ kodeBarang })
-    .del();
-
-  return null;
+  try {
+    await BaseServiceQueryBuilder(BARANG_CONFIG_MAIN_TABLE)
+      .where({ kodeBarang })
+      .del();
+  } catch (error) {
+    console.log(error);
+  } finally {
+    return null;
+  }
 };
 
 module.exports = BarangServiceDelete;

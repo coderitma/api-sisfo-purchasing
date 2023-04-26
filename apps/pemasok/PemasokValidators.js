@@ -1,8 +1,7 @@
-const { body, param, query } = require("express-validator");
-const PemasokServiceGet = require("../services/PemasokServiceGet");
+const { body } = require("express-validator");
+const PemasokServiceGet = require("./services/PemasokServiceGet");
 
-const PemasokValidatorFields = {
-  locator: { body, param, query },
+const PemasokValidators = {
   kodePemasok: (location = body, forCreate = true, field = "kodePemasok") => {
     return location(field)
       .notEmpty()
@@ -57,4 +56,4 @@ const PemasokValidatorFields = {
   },
 };
 
-module.exports = PemasokValidatorFields;
+module.exports = PemasokValidators;

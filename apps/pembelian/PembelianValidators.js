@@ -1,14 +1,13 @@
 const _ = require("lodash");
-const { body, param, query } = require("express-validator");
-const PemasokValidatorFields = require("../../pemasok/validators/PemasokValidatorFields");
-const PembelianServiceGet = require("../services/PembelianServiceGet");
-const BarangValidatorFields = require("../../barang/validators/BarangValidatorFields");
-const BarangServiceGet = require("../../barang/services/BarangServiceGet");
-const BaseValidatorFields = require("../../base/validators/BaseValidatorFields");
-const BaseValidatorHandleUndefined = require("../../base/validators/BaseValidatorHandleUndefined");
+const { body } = require("express-validator");
+const PembelianServiceGet = require("./services/PembelianServiceGet");
+const BarangServiceGet = require("../barang/services/BarangServiceGet");
+const BaseValidatorFields = require("../base/validators/BaseValidatorFields");
+const BaseValidatorHandleUndefined = require("../base/validators/BaseValidatorHandleUndefined");
+const PemasokValidators = require("../pemasok/PemasokValidators");
+const BarangValidators = require("../barang/BarangValidators");
 
-const PembelianValidatorFields = {
-  locator: { body, param, query },
+const PembelianValidators = {
   faktur: (location = body, forCreate = true, field = "faktur") => {
     return location(field)
       .notEmpty()
@@ -34,7 +33,7 @@ const PembelianValidatorFields = {
       .trim();
   },
   kodePemasok: (location = body, field = "kodePemasok") => {
-    return PemasokValidatorFields.kodePemasok(location, false, field);
+    return PemasokValidators.kodePemasok(location, false, field);
   },
   dibayar: (location = body, field = "dibayar") => {
     return location(field)
@@ -85,10 +84,10 @@ const PembelianValidatorFields = {
     },
     inner: {
       kodeBarang: (location = body, field = "items.*.kodeBarang") => {
-        return BarangValidatorFields.kodeBarang(location, false, field);
+        return BarangValidators.kodeBarang(location, false, field);
       },
       namaBarang: (location = body, field = "items.*.namaBarang") => {
-        return BarangValidatorFields.namaBarang(location, field)
+        return BarangValidators.namaBarang(location, field)
           .bail()
           .custom(async (value, { req, location, path }) => {
             const index = _.toPath(path)[1];
@@ -107,7 +106,7 @@ const PembelianValidatorFields = {
           });
       },
       hargaBeli: (location = body, field = "items.*.hargaBeli") => {
-        return BarangValidatorFields.hargaBeli(location, field)
+        return BarangValidators.hargaBeli(location, field)
           .bail()
           .custom(async (value, { req, location, path }) => {
             const index = _.toPath(path)[1];
@@ -227,4 +226,4 @@ const PembelianValidatorFields = {
   },
 };
 
-module.exports = PembelianValidatorFields;
+module.exports = PembelianValidators;
