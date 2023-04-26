@@ -1,8 +1,7 @@
-const { param, body, query } = require("express-validator");
-const BarangServiceGet = require("../services/BarangServiceGet");
+const { body } = require("express-validator");
+const BarangServiceGet = require("./services/BarangServiceGet");
 
-const BarangValidatorFields = {
-  locator: { param, body, query },
+const BarangValidators = {
   kodeBarang: (location = body, forCreate = true, field = "kodeBarang") => {
     return location(field)
       .notEmpty()
@@ -86,4 +85,4 @@ const BarangValidatorFields = {
   },
 };
 
-module.exports = BarangValidatorFields;
+module.exports = BarangValidators;
