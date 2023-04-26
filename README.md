@@ -20,3 +20,5 @@ Jalankan perintah berikut untuk menginstal package yang diperlukan dan menjalank
 npm install
 npm run dev
 ```
+
+Import file `misc/Insomnia SISFO API Purchasing.json` ke Insomnia untuk mencobanya.
