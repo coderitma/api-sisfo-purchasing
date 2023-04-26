@@ -2,6 +2,7 @@ const { body } = require("express-validator");
 var bcrypt = require("bcryptjs");
 const UserServiceFetch = require("../services/UserServiceFetch");
 const UserServiceIsEmailExist = require("../services/UserServiceIsEmailExist");
+const BaseValidatorRun = require("../../base/validators/BaseValidatorRun");
 
 const UserValidatorLogin = () => {
   return [
@@ -28,6 +29,7 @@ const UserValidatorLogin = () => {
           throw new Error("Password tidak valid.");
         }
       }),
+    BaseValidatorRun(),
   ];
 };
 

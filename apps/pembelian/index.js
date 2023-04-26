@@ -1,15 +1,14 @@
-const BaseValidatorRun = require("../base/validators/BaseValidatorRun");
 const UserServiceTokenAuthentication = require("../user/services/UserServiceTokenAuthentication");
 const PembelianControllerCreate = require("./controllers/PembelianControllerCreate");
-const PembelianControllerDetail = require("./controllers/PembelianControllerDetail");
 const PembelianControllerFakturExcel = require("./controllers/PembelianControllerFakturExcel");
 const PembelianControllerList = require("./controllers/PembelianControllerList");
 const PembelianControllerReportPeriodExcel = require("./controllers/PembelianControllerReportPeriodExcel");
 const PembelianValidatorCreate = require("./validators/PembelianValidatorCreate");
-const PembelianValidatorDetail = require("./validators/PembelianValidatorDetail");
 const PembelianValidatorFakturExcel = require("./validators/PembelianValidatorFakturExcel");
 const PembelianValidatorList = require("./validators/PembelianValidatorList");
 const PembelianValidatorReportPeriodExcel = require("./validators/PembelianValidatorReportPeriodExcel");
+const PembelianControllerGet = require("./controllers/PembelianControllerGet");
+const PembelianValidatorGet = require("./validators/PembelianValidatorGet");
 
 const router = require("express").Router();
 
@@ -27,8 +26,8 @@ router.get(
 
 router.get(
   "/:faktur",
-  [UserServiceTokenAuthentication, ...PembelianValidatorDetail()],
-  PembelianControllerDetail
+  [UserServiceTokenAuthentication, ...PembelianValidatorGet()],
+  PembelianControllerGet
 );
 
 router.post(

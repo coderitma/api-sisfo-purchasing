@@ -10,7 +10,8 @@ const BarangValidatorFields = {
       .bail()
       .trim()
       .custom(async (value) => {
-        const barang = await BarangServiceGet(value);
+        const barang = await BarangServiceGet("kodeBarang", value);
+
         if (forCreate && barang) {
           return Promise.reject("Kode barang sudah digunakan.");
         } else if (!forCreate && !barang) {

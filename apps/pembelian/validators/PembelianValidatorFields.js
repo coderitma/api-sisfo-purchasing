@@ -5,6 +5,7 @@ const PembelianServiceGet = require("../services/PembelianServiceGet");
 const BarangValidatorFields = require("../../barang/validators/BarangValidatorFields");
 const BarangServiceGet = require("../../barang/services/BarangServiceGet");
 const BaseValidatorFields = require("../../base/validators/BaseValidatorFields");
+const BaseValidatorHandleUndefined = require("../../base/validators/BaseValidatorHandleUndefined");
 
 const PembelianValidatorFields = {
   locator: { body, param, query },
@@ -15,16 +16,11 @@ const PembelianValidatorFields = {
       .bail()
       .trim()
       .custom(async (value) => {
-        const pembelian = await PembelianServiceGet("faktur", value, false);
-
-        if (forCreate) {
-          if (!_.isEmpty(pembelian)) {
-            return Promise.reject("Faktur pembelian sudah pernah dibuat.");
-          }
-        } else {
-          if (_.isEmpty(pembelian)) {
-            return Promise.reject("Faktur pembelian tidak ada.");
-          }
+        const pembelian = await PembelianServiceGet("faktur", value);
+        if (forCreate && pembelian) {
+          return Promise.reject("Faktur pembelian sudah pernah dibuat.");
+        } else if (!forCreate && !pembelian) {
+          return Promise.reject("Faktur pembelian tidak ada.");
         }
 
         return Promise.resolve(true);
@@ -97,8 +93,12 @@ const PembelianValidatorFields = {
           .custom(async (value, { req, location, path }) => {
             const index = _.toPath(path)[1];
             const barang = await BarangServiceGet(
+              "kodeBarang",
               req[location].items[index].kodeBarang
             );
+
+            BaseValidatorHandleUndefined(barang, "Kode Barang");
+
             if (barang.namaBarang !== value) {
               throw new Error(
                 "Nama barang tidak sama dengan nama barang aslinya."
@@ -112,8 +112,12 @@ const PembelianValidatorFields = {
           .custom(async (value, { req, location, path }) => {
             const index = _.toPath(path)[1];
             const barang = await BarangServiceGet(
+              "kodeBarang",
               req[location].items[index].kodeBarang
             );
+
+            BaseValidatorHandleUndefined(barang, "Kode Barang");
+
             if (barang.hargaBeli !== value) {
               return Promise.reject(
                 "Harga beli barang tidak sama dengan harga beli aslinya."
@@ -155,8 +159,12 @@ const PembelianValidatorFields = {
           .custom(async (value, { req, location, path }) => {
             const index = _.toPath(path)[1];
             const barang = await BarangServiceGet(
+              "kodeBarang",
               req[location].items[index].kodeBarang
             );
+
+            BaseValidatorHandleUndefined(barang, "Kode Barang");
+
             const calculateSubtotal =
               barang.hargaBeli * req[location].items[index].jumlahBeli;
             if (calculateSubtotal !== value) {

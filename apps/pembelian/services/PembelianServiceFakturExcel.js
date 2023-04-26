@@ -1,7 +1,4 @@
 const xl = require("exceljs");
-const PembelianServiceGet = require("./PembelianServiceGet");
-const PemasokServiceGet = require("../../pemasok/services/PemasokServiceGet");
-const PembelianServiceGetItemBeli = require("./PembelianServiceGetItemBeli");
 const BaseServiceExcelColumnResponsive = require("../../base/services/BaseServiceExcelColumnResponsive");
 const {
   BASE_CONFIG_EXCEL_FONT_HEADER,
@@ -9,7 +6,7 @@ const {
   BASE_CONFIG_EXCEL_BORDER,
 } = require("../../base/config");
 
-const PembelianServiceFakturExcel = async (pembelian, pemasok) => {
+const PembelianServiceFakturExcel = async (pembelian, pemasok, items) => {
   const wb = new xl.Workbook();
   const ws = wb.addWorksheet(`faktur`);
 
@@ -81,7 +78,7 @@ const PembelianServiceFakturExcel = async (pembelian, pemasok) => {
   ws.getCell("E5").border = BASE_CONFIG_EXCEL_BORDER;
 
   colNumber = 6;
-  for (const item of pembelian.items) {
+  for (const item of items) {
     ws.getCell(`A${colNumber}`).value = item.kodeBarang;
     ws.getCell(`B${colNumber}`).value = item.namaBarang;
     ws.getCell(`C${colNumber}`).value = item.hargaBeli;

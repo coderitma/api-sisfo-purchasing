@@ -6,15 +6,7 @@ const UserValidatorRegister = require("./validators/UserValidatorRegister");
 
 const router = require("express").Router();
 
-router.post(
-  "/login",
-  [...UserValidatorLogin(), BaseValidatorRun],
-  UserControllerLogin
-);
-router.post(
-  "/register",
-  [...UserValidatorRegister(), BaseValidatorRun],
-  UserControllerRegister
-);
+router.post("/login", [...UserValidatorLogin()], UserControllerLogin);
+router.post("/register", [...UserValidatorRegister()], UserControllerRegister);
 
 module.exports = router;

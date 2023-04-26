@@ -1,7 +1,7 @@
 const BaseValidatorRun = require("../../base/validators/BaseValidatorRun");
 const PembelianValidatorFields = require("./PembelianValidatorFields");
 
-const PembelianValidatorDetail = () => {
+const PembelianValidatorGet = () => {
   return [
     PembelianValidatorFields.faktur(
       PembelianValidatorFields.locator.param,
@@ -11,4 +11,4 @@ const PembelianValidatorDetail = () => {
   ];
 };
 
-module.exports = PembelianValidatorDetail;
+module.exports = PembelianValidatorGet;

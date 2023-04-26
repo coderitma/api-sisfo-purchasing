@@ -5,9 +5,8 @@ const PemasokServiceGet = async (field, value, many = false) => {
   const results = await BaseServiceQueryBuilder(
     PEMASOK_CONFIG_MAIN_TABLE
   ).where({ [field]: value });
-  if (many) {
-    return results;
-  }
+
+  if (many) return results;
 
   return results[0];
 };

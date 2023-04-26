@@ -10,19 +10,12 @@ const PemasokValidatorFields = {
       .bail()
       .trim()
       .custom(async (value) => {
-        const pemasok = await PemasokServiceGet(
-          "kodePemasok",
-          value,
-          (many = false)
-        );
+        const pemasok = await PemasokServiceGet("kodePemasok", value);
         if (forCreate && pemasok) {
           return Promise.reject("Kode pemasok sudah pernah dibuat.");
-        }
-
-        if (!forCreate && !pemasok) {
+        } else if (!forCreate && !pemasok) {
           return Promise.reject("Kode pemasok tidak terdaftar.");
         }
-
         return Promise.resolve(true);
       });
   },
