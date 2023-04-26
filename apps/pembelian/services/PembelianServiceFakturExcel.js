@@ -7,24 +7,11 @@ const {
   BASE_CONFIG_EXCEL_FONT_HEADER,
   BASE_CONFIG_EXCEL_FILL_HEADER,
   BASE_CONFIG_EXCEL_BORDER,
-  BASE_CONFIG_EXCEL_ALIGNMENT_HEADER_NUMBER,
 } = require("../../base/config");
 
-const PembelianServiceFakturExcel = async (faktur) => {
+const PembelianServiceFakturExcel = async (pembelian, pemasok) => {
   const wb = new xl.Workbook();
   const ws = wb.addWorksheet(`faktur`);
-
-  const pembelian = await PembelianServiceGet("faktur", faktur, false);
-  const pemasok = await PemasokServiceGet(
-    "kodePemasok",
-    pembelian.kodePemasok,
-    false
-  );
-  const itemBeli = await PembelianServiceGetItemBeli(
-    "faktur",
-    faktur,
-    (many = true)
-  );
 
   ws.getCell("D1").font = BASE_CONFIG_EXCEL_FONT_HEADER;
   ws.getCell("D2").font = BASE_CONFIG_EXCEL_FONT_HEADER;
@@ -94,7 +81,7 @@ const PembelianServiceFakturExcel = async (faktur) => {
   ws.getCell("E5").border = BASE_CONFIG_EXCEL_BORDER;
 
   colNumber = 6;
-  for (const item of itemBeli) {
+  for (const item of pembelian.items) {
     ws.getCell(`A${colNumber}`).value = item.kodeBarang;
     ws.getCell(`B${colNumber}`).value = item.namaBarang;
     ws.getCell(`C${colNumber}`).value = item.hargaBeli;

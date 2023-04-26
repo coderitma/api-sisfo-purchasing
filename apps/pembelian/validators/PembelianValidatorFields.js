@@ -4,6 +4,7 @@ const PemasokValidatorFields = require("../../pemasok/validators/PemasokValidato
 const PembelianServiceGet = require("../services/PembelianServiceGet");
 const BarangValidatorFields = require("../../barang/validators/BarangValidatorFields");
 const BarangServiceGet = require("../../barang/services/BarangServiceGet");
+const BaseValidatorFields = require("../../base/validators/BaseValidatorFields");
 
 const PembelianValidatorFields = {
   locator: { body, param, query },
@@ -15,13 +16,18 @@ const PembelianValidatorFields = {
       .trim()
       .custom(async (value) => {
         const pembelian = await PembelianServiceGet("faktur", value, false);
-        if (forCreate && !_.isEmpty(pembelian)) {
-          return Promise.reject("Faktur pembelian sudah pernah dibuat.");
+
+        if (forCreate) {
+          if (!_.isEmpty(pembelian)) {
+            return Promise.reject("Faktur pembelian sudah pernah dibuat.");
+          }
+        } else {
+          if (_.isEmpty(pembelian)) {
+            return Promise.reject("Faktur pembelian tidak ada.");
+          }
         }
 
-        if (!forCreate && _.isEmpty(pembelian)) {
-          return Promise.reject("Faktur pembelian tidak ada.");
-        }
+        return Promise.resolve(true);
       });
   },
   tanggal: (location = body, field = "tanggal") => {
@@ -189,6 +195,27 @@ const PembelianValidatorFields = {
 
         return true;
       });
+  },
+  reporting: {
+    terms: (location = body, field = "terms") => {
+      return BaseValidatorFields.terms(location, field);
+    },
+    startDate: (location = body, field = "startDate") => {
+      return location(field)
+        .notEmpty()
+        .withMessage("Start date wajib diisi.")
+        .bail()
+        .isDate()
+        .withMessage("Start date tidak valid.");
+    },
+    endDate: (location = body, field = "endDate") => {
+      return location(field)
+        .notEmpty()
+        .withMessage("End date wajib diisi.")
+        .bail()
+        .isDate()
+        .withMessage("End date tidak valid.");
+    },
   },
 };
 
