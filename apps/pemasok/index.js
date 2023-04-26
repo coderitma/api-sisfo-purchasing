@@ -2,7 +2,6 @@ const router = require("express").Router();
 const PemasokValidatorCreate = require("./validators/PemasokValidatorCreate");
 const UserServiceTokenAuthentication = require("../user/services/UserServiceTokenAuthentication");
 const PemasokControllerCreate = require("./controllers/PemasokControllerCreate");
-const BaseValidatorRun = require("../base/validators/BaseValidatorRun");
 const PemasokValidatorList = require("./validators/PemasokValidatorList");
 const PemasokControllerList = require("./controllers/PemasokControllerList");
 const PemasokValidatorGet = require("./validators/PemasokValidatorGet");
@@ -14,39 +13,31 @@ const PemasokControllerDelete = require("./controllers/PemasokControllerDelete")
 
 router.post(
   "/",
-  [
-    UserServiceTokenAuthentication,
-    ...PemasokValidatorCreate(),
-    BaseValidatorRun,
-  ],
+  [UserServiceTokenAuthentication, ...PemasokValidatorCreate()],
   PemasokControllerCreate
 );
 
 router.get(
   "/",
-  [UserServiceTokenAuthentication, ...PemasokValidatorList(), BaseValidatorRun],
+  [UserServiceTokenAuthentication, ...PemasokValidatorList()],
   PemasokControllerList
 );
 
 router.get(
   "/:kodePemasok",
-  [UserServiceTokenAuthentication, ...PemasokValidatorGet(), BaseValidatorRun],
+  [UserServiceTokenAuthentication, ...PemasokValidatorGet()],
   PemasokControllerGet
 );
 
 router.put(
   "/:kodePemasok",
-  [UserServiceTokenAuthentication, ...PemasokValidatorEdit(), BaseValidatorRun],
+  [UserServiceTokenAuthentication, ...PemasokValidatorEdit()],
   PemasokControllerEdit
 );
 
 router.delete(
   "/:kodePemasok",
-  [
-    UserServiceTokenAuthentication,
-    ...PemasokValidatorDelete(),
-    BaseValidatorRun,
-  ],
+  [UserServiceTokenAuthentication, ...PemasokValidatorDelete()],
   PemasokControllerDelete
 );
 

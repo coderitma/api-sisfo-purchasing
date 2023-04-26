@@ -1,19 +1,13 @@
-const { param } = require("express-validator");
-const BarangServiceGet = require("../services/BarangServiceGet");
+const BaseValidatorRun = require("../../base/validators/BaseValidatorRun");
+const BarangValidatorFields = require("./BarangValidatorFields");
 
 const BarangValidatorGet = () => {
   return [
-    param("kodeBarang")
-      .notEmpty()
-      .withMessage("Kode barang wajib")
-      .bail()
-      .trim()
-      .custom(async (value) => {
-        const barang = await BarangServiceGet(value);
-        if (!barang) {
-          throw new Error("Barang tidak tersedia.");
-        }
-      }),
+    BarangValidatorFields.kodeBarang(
+      BarangValidatorFields.locator.param,
+      false
+    ),
+    BaseValidatorRun(),
   ];
 };
 

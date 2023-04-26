@@ -1,25 +1,24 @@
-const BaseServiceQueryBuilder = require("../../base/services/BaseServiceQueryBuilder");
-const PemasokValidatorGet = require("./PemasokValidatorGet");
+const BaseValidatorRun = require("../../base/validators/BaseValidatorRun");
+const PembelianServiceGet = require("../../pembelian/services/PembelianServiceGet");
+const PemasokValidatorFields = require("./PemasokValidatorFields");
 
 const PemasokValidatorDelete = () => {
-  const [pemasokValidatorGet] = PemasokValidatorGet();
   return [
-    pemasokValidatorGet
+    PemasokValidatorFields.kodePemasok(
+      PemasokValidatorFields.locator.param,
+      false
+    )
+      .bail()
       .custom(async (value) => {
-        // TODO: pindahkan kode ini di dalam service pembelian, nanti..
-        const pembelian = (
-          await BaseServiceQueryBuilder("pembelian").where({
-            kodePemasok: value,
-          })
-        )[0];
-
+        const pembelian = await PembelianServiceGet("kodePemasok", value);
+        console.log(value);
         if (pembelian) {
           throw new Error(
-            "Pemasok tidak dapat dihapus karena sudah ada di dalam transaksi pembelian."
+            "Kode pemasok sudah digunakan dalam beberapa transaksi pembelian."
           );
         }
-      })
-      .bail(),
+      }),
+    BaseValidatorRun(),
   ];
 };
 

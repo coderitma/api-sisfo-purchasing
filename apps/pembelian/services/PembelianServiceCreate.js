@@ -26,11 +26,9 @@ const PembelianServiceCreate = async (
     return {
       faktur,
       kodeBarang: item.kodeBarang,
-      jumlahBarang: 0,
       jumlahBeli: item.jumlahBeli,
       namaBarang: item.namaBarang,
       hargaBeli: item.hargaBeli,
-      hargaJual: item.hargaJual,
       subtotal: item.subtotal,
     };
   });

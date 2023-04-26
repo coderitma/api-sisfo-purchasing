@@ -1,4 +1,3 @@
-const BaseValidatorRun = require("../base/validators/BaseValidatorRun");
 const UserServiceTokenAuthentication = require("../user/services/UserServiceTokenAuthentication");
 const BarangControllerCreate = require("./controllers/BarangControllerCreate");
 const BarangControllerDelete = require("./controllers/BarangControllerDelete");
@@ -15,39 +14,31 @@ const router = require("express").Router();
 
 router.post(
   "/",
-  [
-    UserServiceTokenAuthentication,
-    ...BarangValidatorCreate(),
-    BaseValidatorRun,
-  ],
+  [UserServiceTokenAuthentication, ...BarangValidatorCreate()],
   BarangControllerCreate
 );
 
 router.get(
   "/",
-  [UserServiceTokenAuthentication, ...BarangValidatorList(), BaseValidatorRun],
+  [UserServiceTokenAuthentication, ...BarangValidatorList()],
   BarangControllerList
 );
 
 router.get(
   "/:kodeBarang",
-  [UserServiceTokenAuthentication, ...BarangValidatorGet(), BaseValidatorRun],
+  [UserServiceTokenAuthentication, ...BarangValidatorGet()],
   BarangControllerGet
 );
 
 router.put(
   "/:kodeBarang",
-  [UserServiceTokenAuthentication, ...BarangValidatorEdit(), BaseValidatorRun],
+  [UserServiceTokenAuthentication, ...BarangValidatorEdit()],
   BarangControllerEdit
 );
 
 router.delete(
   "/:kodeBarang",
-  [
-    UserServiceTokenAuthentication,
-    ...BarangValidatorDelete(),
-    BaseValidatorRun,
-  ],
+  [UserServiceTokenAuthentication, ...BarangValidatorDelete()],
   BarangControllerDelete
 );
 

@@ -1,9 +1,9 @@
 const BaseServiceQueryBuilder = require("../../base/services/BaseServiceQueryBuilder");
-const { PEMBELIAN_CONFIG_MAIN_TABLE } = require("../config");
+const { PEMBELIAN_CONFIG_ITEM_BELI_TABLE } = require("../config");
 
-const PembelianServiceGet = async (field, value, many = false) => {
+const PembelianServiceGetItemBeli = async (field, value, many = false) => {
   const results = await BaseServiceQueryBuilder(
-    PEMBELIAN_CONFIG_MAIN_TABLE
+    PEMBELIAN_CONFIG_ITEM_BELI_TABLE
   ).where({ [field]: value });
   if (many) {
     return results;
@@ -12,4 +12,4 @@ const PembelianServiceGet = async (field, value, many = false) => {
   return results[0];
 };
 
-module.exports = PembelianServiceGet;
+module.exports = PembelianServiceGetItemBeli;
